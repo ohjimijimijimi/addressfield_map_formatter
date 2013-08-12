@@ -1,0 +1,30 @@
+<?php
+
+function addressfield_map_formatter_field_formatter_info() {
+  return array(
+    'addressfield_map_formatter' => array(
+      'label' => t('Map Link'),
+      'field types' => array('addressfield'),
+    ),
+  );
+}
+
+function addressfield_map_formatter_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+  $element = array();
+
+  foreach ($items as $delta => $item) {
+    $address = addressfield_generate($item, array('address'), array('mode' => NULL));
+    $country = $address['country']['#options'][$address['#address']['country']];
+    $address = $address['#address'];
+    $name = !empty($address['name_line']) ? $address['name_line'] : (!empty($address['organization_name']) ? $address['organization_name'] : $address['first_name'] .' '. $address['last_name']);
+    if (!empty($name)) {
+      $address = "$name, ${address['thoroughfare']}, ${address['postal_code']}, ${address['locality']}, $country";
+      $element[$delta] = array(
+        '#type' => 'markup',
+        '#markup' => l($name, 'http://maps.google.com/maps', array('external' => TRUE, 'query' => array('q' => $address), 'attributes' => array('title' => $name))),
+      );
+    }
+  }
+
+  return $element;
+}

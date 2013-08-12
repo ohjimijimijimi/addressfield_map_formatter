@@ -1,0 +1,4 @@
+name = Addressfield Map formatter
+description = A formatter to render an addressfield as a map.
+package = AA
+core = 7.x
